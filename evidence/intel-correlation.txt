@@ -1,0 +1,40 @@
+INDICATOR CORRELATION — public intel lookups, 2026-11-17
+========================================================
+
+ALIENVAULT OTX
+  api/v1/indicators/IPv4/166.1.89.91/general   -> pulse_info.count = 0
+  api/v1/indicators/domain/dateseni.su/general -> pulse_info.count = 0
+
+  Neither indicator appears in any OTX pulse. interpretation: this
+  infrastructure has not been shared with the community, or it is too fresh and
+  too low-volume to have been collected. Absence of intel is not evidence of
+  benign - it means nobody has published it yet.
+
+GREYNOISE COMMUNITY API
+  166.1.89.91     -> noise=false, riot=false, "IP not observed scanning the internet"
+  196.251.107.41  -> noise=false, riot=false, "IP not observed scanning the internet"
+
+  Neither host performs opportunistic scanning. That is consistent with a
+  purpose-built staging/loader server that only speaks to victims, not a
+  compromised host that scans outward. riot=false means it is not a known
+  benign service either (no Google/AWS/etc).
+
+ABUSE.CH (URLhaus, ThreatFox)
+  -> HTTP 401 {"error":"Unauthorized"}
+
+  Both APIs now require an Auth-Key. Not queried. Recorded here so the report
+  does not imply coverage it did not have.
+
+ABUSEIPDB
+  Web front end served the anti-scraping page to an automated client.
+  Not usable without an account and API key.
+
+URLSCAN
+  Public search for ip:166.1.89.91 -> 1 submission (2026-11-12)
+  API result endpoint -> 401 "You're not logged in!"
+  Result HTML page -> public and readable (screenshotted)
+
+SUMMARY OF CORRELATION
+  Known-bad in public feeds : no
+  Actively hostile now      : yes, still cloaking (302 -> google.com)
+  Verdict driver            : direct observation, not reputation

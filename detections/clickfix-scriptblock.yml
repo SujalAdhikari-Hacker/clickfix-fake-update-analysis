@@ -1,0 +1,39 @@
+title: PowerShell Network-to-Eval Chain in Script Block Log
+id: 2b7d9e41-c3a8-4f60-8d15-9e2a4c6b8f01
+status: experimental
+description: >
+  Script Block Logging sees the evaluated code even when the command line is
+  obfuscated, so this survives re-encoded ClickFix launchers. Preferred over
+  the command-line rule where logging is available.
+references:
+  - https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_logging_windows
+author: (your name)
+date: 2026/11/17
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.t1027
+logsource:
+  product: windows
+  service: powershell
+  definition: 'Requires Script Block Logging, Event ID 4104'
+detection:
+  selection_download:
+    ScriptBlockText|contains:
+      - 'Invoke-WebRequest'
+      - 'Net.WebClient'
+      - 'DownloadString'
+      - 'DownloadData'
+  selection_eval:
+    ScriptBlockText|contains:
+      - 'Invoke-Expression'
+      - 'IEX'
+  condition: selection_download and selection_eval
+fields:
+  - ScriptBlockText
+  - Computer
+  - UserID
+falsepositives:
+  - Package managers and installers written in PowerShell
+  - Some CI/CD agents
+level: critical

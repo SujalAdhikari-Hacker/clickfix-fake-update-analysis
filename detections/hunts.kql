@@ -1,0 +1,37 @@
+// ClickFix hunting queries - Microsoft 365 Defender / Sentinel
+// Adapt table names for your environment.
+
+// 1. PowerShell launched by Explorer: the Win+X -> I artefact
+DeviceProcessEvents
+| where FileName in~ ("powershell.exe", "pwsh.exe", "wt.exe")
+| where InitiatingProcessFileName =~ "explorer.exe"
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName
+| order by Timestamp desc
+
+// 2. Download-and-eval on the command line
+DeviceProcessEvents
+| where FileName in~ ("powershell.exe", "pwsh.exe")
+| where ProcessCommandLine has_any ("Invoke-WebRequest", "IEX", "Invoke-Expression", "FromBase64String")
+| where ProcessCommandLine has_any ("http://", "https://", "FromBase64String")
+| project Timestamp, DeviceName, AccountName, ProcessCommandLine
+
+// 3. PowerShell making direct outbound connections (IWR to an IP literal)
+DeviceNetworkEvents
+| where InitiatingProcessFileName in~ ("powershell.exe", "pwsh.exe")
+| where RemoteIPType == "Public"
+| where RemotePort in (80, 443)
+| summarize Connections = count(), FirstSeen = min(Timestamp), LastSeen = max(Timestamp)
+    by DeviceName, RemoteIP, RemotePort, InitiatingProcessFileName
+| order by Connections desc
+
+// 4. Known IOCs from this case
+let badIPs = dynamic(["166.1.89.91", "196.251.107.41"]);
+DeviceNetworkEvents
+| where RemoteIP in (badIPs)
+| project Timestamp, DeviceName, InitiatingProcessFileName, RemoteIP, RemotePort, RemoteUrl
+
+// 5. Known domains from this case
+let badDomains = dynamic(["dateseni.su", "highporn.net"]);
+DeviceNetworkEvents
+| where RemoteUrl has_any (badDomains)
+| project Timestamp, DeviceName, InitiatingProcessFileName, RemoteUrl

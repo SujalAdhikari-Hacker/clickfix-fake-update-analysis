@@ -1,0 +1,43 @@
+WAYBACK MACHINE — ARCHIVED COPY OF THE EXACT URL
+==================================================
+API : http://archive.org/wayback/available?url=dateseni.su/rave/next.php
+
+closest snapshot:
+  timestamp : 20260705202955   (2026-07-05 20:29:55 UTC)
+  url       : http://web.archive.org/web/20260705202955/https://dateseni.su/rave/next.php
+  status    : 200
+
+CDX INDEX (all archived URLs for the whole domain, collapsed by URL key)
+  only one URL is archived:
+    https://dateseni.su/rave/next.php   20260705202955   200   text/html
+
+--- RAW ARCHIVED BODY (124 bytes, fetched with id_ modifier = original bytes) ---
+<meta http-equiv="refresh" content="0; url=https://highporn.net/video/30978/dss-110-get-amateur-pick-up-no-110-ver-saitama">
+
+--- SO WHAT IS next.php? ---
+In the archive, next.php is not the fake update page. It is a one-line
+redirector: it bounces the visitor to an adult video site (highporn.net).
+
+This explains the whole delivery pattern:
+  * the .su domain supplies the "click me" link and looks disposable
+  * next.php is a traffic router ("rave" = the campaign path)
+  * the adult site is the placement where the fake-update overlay lives
+  * a redirector keeps the fake-update page off the flagged domain
+
+And it explains the contradiction with the live report: the archived body does
+NOT contain the PowerShell payload. The fake update screen the user saw was
+rendered further down the chain, or served to that visitor only.
+
+This is cloaking. The same URL can return:
+  - a harmless porn redirect  -> to crawlers, sandboxes, researchers
+  - the fake-update overlay   -> to real desktop Chrome on a residential IP
+
+That behaviour is independently confirmed by the urlscan result below, where
+http://166.1.89.91/zap redirected the scanner off-domain to google.com.
+
+LIMITATION
+----------
+Wayback only holds one snapshot and it is the harmless variant. The malicious
+variant was never archived. Everything about the fake-update screen therefore
+rests on the user's observation and on the stage-2 payload, not on a captured
+copy of the page. Stated plainly so the report does not overclaim.

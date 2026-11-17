@@ -1,0 +1,48 @@
+PASSIVE DNS / INFRASTRUCTURE — collected 2026-11-17
+====================================================
+
+$ Resolve-DnsName dateseni.su -Type A
+dateseni.su     A       196.251.107.41
+
+$ Resolve-DnsName dateseni.su -Type NS
+dateseni.su     NS      ns1.reg.ru
+dateseni.su     NS      ns2.reg.ru
+
+$ Resolve-DnsName dateseni.su -Type MX
+(no MX returned in this query; mail hostnames exist in TLS certs, see below)
+
+
+HOST: 196.251.107.41  (lure / redirector domain)
+  Country : Germany (DE)
+  City    : Frankfurt am Main, Hesse
+  ASN     : AS214351 FEMO IT SOLUTIONS LIMITED
+  ISP     : Femo IT Solutions Limited
+  Range   : 196.251.107.0/24
+  Company : "internet-security" (registrant string, not a claim about the host)
+  Domains : 2 hosted on this IP
+  Privacy : true
+  Abuse   : abuse@rentdedic.com   <- where to send the abuse report
+
+HOST: 166.1.89.91  (payload / stage-2 server — NOT the same server)
+  Country : United States (US)
+  City    : New York
+  ASN     : AS395839 HOSTKEY
+  Org     : InterLIR LLC  /  "Ace Data Centers"
+  Range   : 166.1.89.0/24
+  Privacy : true (reseller / privacy service)
+  Abuse   : ripe@interlir.com   <- where to send the abuse report
+  Note    : hosting reseller space; common in abuse-feed data
+
+KEY OBSERVATION
+---------------
+The phishing domain and the malware server are on completely different
+providers, countries and ASNs:
+    dateseni.su  -> DE, AS214351 (FEMO)
+    166.1.89.91  -> US, AS395839 (HOSTKEY)
+Blocking one does not stop the other. This split is deliberate: the lure can be
+burnt and replaced without touching the payload server, and vice versa.
+
+REGISTRAR / TLD
+---------------
+.su = legacy Soviet Union ccTLD, still operated, historically cheap and
+permissive. Nameservers ns1/ns2.reg.ru = REG.RU, a Russian registrar/hoster.

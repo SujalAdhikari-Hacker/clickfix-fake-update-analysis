@@ -1,0 +1,46 @@
+URLSCAN.IO — INDEPENDENT CONFIRMATION OF THE PAYLOAD HOST
+==========================================================
+Query: https://urlscan.io/api/v1/search/?q=ip%3A166.1.89.91&size=10
+
+total: 1
+
+submission
+  url         : http://166.1.89.91/zap        <-- the exact path in the payload
+  time        : 2026-11-12T21:38:41Z          <-- five days before this report
+  method      : api
+  tags        : ["hybridanalysis"]            <-- auto-submitted from a sandbox
+  uuid        : 01a1d1b2-b771-73cb-bc69-2211a660d30c
+
+result of that scan
+  page.url    : https://www.google.com/
+  page.title  : Google
+  redirected  : off-domain
+  requests    : 41
+  uniqIPs     : 6
+  countries   : 2
+  tlsIssuer   : WE2 (Let's Encrypt)
+  server      : gws (Google Web Server)
+
+READING OF THIS RESULT
+----------------------
+The sandbox asked for /zap and was handed a redirect to google.com. The final
+page is literally Google, which scores as benign in naive scanners and gives the
+host a clean-ish reputation.
+
+The host decides what to serve based on who is asking: sandbox, datacentre IP,
+wrong geography or missing browser fingerprint -> Google. A real desktop browser
+-> stage-2 payload. This is geofencing + user-agent/fingerprint cloaking, and it
+is why the URL "looks fine" when anyone tries to check it for you.
+
+This is exactly the trap in "I submitted it to VirusTotal / urlscan and it came
+back clean". The scan tested the incumbent's decoy, not the payload.
+
+Same behaviour seen on the lure side: the archive only ever captured the
+highporn.net redirect, never the fake-update overlay.
+
+WHAT THE PAYLOAD PATH TELLS US
+------------------------------
+/zap/ is short, generic and unrelated to any brand. Kits in this family rotate
+paths ( /zap/, /next/, /r/, /v/ ) and re-point an IP or domain at a fresh
+build, so path-based blocking alone ages badly. Block the resolved IP + ASN
+egress instead, and alert on the behaviour (IWR|IEX) rather than the URL.

@@ -1,0 +1,72 @@
+LIVE STATE MEASUREMENTS — 2026-11-17 08:22 GMT
+==============================================
+All checks are minimal: TCP connect tests, one GET per web path, one HEAD.
+No payload was downloaded and nothing was executed.
+
+--- PORT STATE (Test-NetConnection) ---
+dateseni.su       :22 open=True    :80 open=True    :443 open=False
+www.dateseni.su   :22 open=True    :80 open=True    :443 open=False
+166.1.89.91       :22 open=True    :80 open=True    :443 open=False
+
+HTTPS is not listening on any of them. The certificates found in crt.sh are no
+longer served. Any link using https:// to this domain now fails at the TCP
+layer with "connection refused".
+
+--- GET http://dateseni.su/rave/next.php (no redirect follow) ---
+HTTP/1.1 404 Not Found
+Server: nginx/1.18.0 (Ubuntu)
+Date: Tue, 17 Nov 2026 08:22:48 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2949
+Last-Modified: Tue, 18 Aug 2026 11:28:19 GMT
+ETag: "b85-65950956cb21a"
+
+Body is the host's generic "Page Not Found / Error Code: 404" template.
+
+=> The campaign path is gone. The server is up, the kit is not there.
+
+--- GET http://dateseni.su/ ---
+<title>Success!</title>
+Visible text: "Success!  Your new web server is ready to use."
+
+That string is the default placeholder served by ISPConfig-style hosting
+panels after a fresh site provisioning. In other words the vhost has been reset
+to an empty default site.
+
+--- HEAD http://166.1.89.91/zap/ ---
+HTTP/1.1 302 Found
+Date: Tue, 17 Nov 2026 08:22:35 GMT
+Server: Apache/2.4.52 (Ubuntu)
+Location: https://www.google.com/
+Content-Type: text/html; charset=iso-8859-1
+
+=> The payload host is STILL ALIVE and STILL cloaking: a bare HEAD request is
+   answered with a redirect to Google. This is the same behaviour urlscan
+   recorded on 2026-11-12, five days earlier.
+
+--- SHODAN INTERNETDB ---
+166.1.89.91
+  ports     : 22, 80
+  cpes      : apache:http_server:2.4.52, canonical:ubuntu_linux, openbsd:openssh:8.9p1
+  hostnames : (none)
+  tags      : (none)
+  vulns     : 90+ CVEs listed against the Apache and OpenSSH versions
+
+196.251.107.41
+  ports     : 22, 80
+  cpes      : f5:nginx:1.18.0, canonical:ubuntu_linux, openbsd:openssh:8.9p1, linux:kernel
+  hostnames : (none)
+  tags      : ["eol-product"]
+  vulns     : CVE-2025-23419, CVE-2021-3618, CVE-2021-23017, CVE-2023-44487
+
+Both are plain single-purpose Linux web boxes with the same OpenSSH build
+(8.9p1, Ubuntu 22.04 era) and no hostname set. The lure box runs nginx 1.18.0,
+which is flagged end-of-life. The payload box runs Apache 2.4.52, released
+December 2021 and unpatched since.
+
+--- INTERPRETATION ---
+Lure side: retired. Path removed, HTTPS torn down, vhost reset to a placeholder.
+Payload side: still running and still selecting its response by client. That
+split is normal for this family. The cheap component (domain + vhost) gets
+cleaned first; the box that holds the actual payload stays up for the next
+campaign and the next domain.

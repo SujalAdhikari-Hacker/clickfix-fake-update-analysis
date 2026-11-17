@@ -1,0 +1,48 @@
+title: ClickFix Style PowerShell Download and Execute
+id: 8f2c1b64-3f5a-4c1e-9a77-6f1c1a2b3c4d
+status: experimental
+description: >
+  Detects PowerShell fetching remote content and immediately evaluating it.
+  This is the stage-1 behaviour of ClickFix / fake-update / fake-CAPTCHA
+  campaigns, where a web page walks the victim into pasting a launcher.
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
+  - https://attack.mitre.org/techniques/T1204/004/
+  - https://attack.mitre.org/techniques/T1105/
+author: (your name)
+date: 2026/11/17
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.t1204.004
+  - attack.t1105
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith: '\powershell.exe'
+    - Image|endswith: '\pwsh.exe'
+  selection_download:
+    CommandLine|contains:
+      - 'Invoke-WebRequest'
+      - 'iwr '
+      - 'Net.WebClient'
+      - 'DownloadString'
+      - 'DownloadFile'
+  selection_exec:
+    CommandLine|contains:
+      - 'Invoke-Expression'
+      - 'IEX'
+  selection_b64:
+    CommandLine|contains: 'FromBase64String'
+  condition: selection_img and selection_download and (selection_exec or selection_b64)
+fields:
+  - CommandLine
+  - ParentImage
+  - User
+falsepositives:
+  - Legitimate admin scripts that download and run installers
+  - Software deployment tooling (SCCM, Intune scripts)
+  - Some developer bootstrap scripts
+level: high

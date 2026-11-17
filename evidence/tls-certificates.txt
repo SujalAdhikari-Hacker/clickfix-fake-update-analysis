@@ -1,0 +1,43 @@
+CERTIFICATE TRANSPARENCY (crt.sh) — dateseni.su
+================================================
+Query: https://crt.sh/?q=dateseni.su&output=json
+
+CERT #1  Let's Encrypt YE2
+  common_name : dateseni.su
+  san         : dateseni.su, www.dateseni.su
+  not_before  : 2026-06-18 14:47:06 UTC
+  not_after   : 2026-09-16 14:47:05 UTC
+  serial      : 05fd43a507156b30c41e74149c948a0f8416
+
+CERT #2  GlobalSign GCC R3 DV TLS CA 2020
+  common_name : www.dateseni.su
+  san         : autodiscover.dateseni.su
+                dateseni.su
+                mail.dateseni.su
+                owa.dateseni.su
+                www.dateseni.su
+  not_before  : 2026-03-21 17:46:42 UTC
+  not_after   : 2026-10-06 17:46:42 UTC
+  serial      : 11e6bb08a96e18ae71df52c2
+
+WHY THIS MATTERS
+----------------
+The SAN list is the tell. A site that only needed to serve a web page would ask
+for dateseni.su and www.dateseni.su. This certificate also covers:
+
+    mail.dateseni.su          -> SMTP/IMAP
+    owa.dateseni.su           -> Outlook Web Access
+    autodiscover.dateseni.su  -> Outlook client auto-config
+
+That is the standard hostname set for a *mail server impersonating Exchange*.
+Translation: the same domain was built to run mass email campaigns and a fake
+Outlook Web Access login page, not just to host one redirect.
+
+Also note the cert lifetime. The GlobalSign cert is a 200-day DV cert issued in
+March; the Let's Encrypt cert was re-issued in June after (presumably) the
+first one became inconvenient. Short-lived free DV certs mean the operators can
+rotate identity cheaply the moment abuse reports land.
+
+The domain is younger than the certificates suggest at first glance — a
+2026-03 issuance means the *infrastructure* is at most ~8 months old as of
+this analysis, and the June re-issue suggests active, ongoing operation.
