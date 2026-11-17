@@ -70,7 +70,7 @@ The link lived on `dateseni.su`, which resolves to a machine in Frankfurt on AS2
 
 ![Payload host ownership](screenshots/03-ipinfo-payload-host.png)
 
-Blocking the domain does not stop the payload. Blocking the payload does not stop the domain. Whoever built this expected one of them to get reported and the other to survive, which is exactly how it played out. The lure has been taken down. The payload host answered my request five months later with the same redirect it gave a sandbox in November.
+Blocking the domain does not stop the payload. Blocking the payload does not stop the domain. Whoever built this expected one of them to get reported and the other to survive, which is exactly how it played out. The lure has been taken down. The payload host answered my request five days after the sandbox scan with the same redirect.
 
 ## The certificate gave away what the domain was for
 
